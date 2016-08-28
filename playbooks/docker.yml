@@ -1,0 +1,37 @@
+# Docker install via Ansible playbook.
+
+- hosts: all
+  tasks:
+    - name: Add Docker repo key
+      apt_key:
+        id: F76221572C52609D
+        keyserver: "http://apt.dockerproject.org/gpg"
+        state: present
+
+    - name: Add Docker repo
+      apt_repository:
+        repo: "deb http://apt.dockerproject.org/repo ubuntu-trusty main"
+        mode: 644
+        update_cache: yes
+        state: present
+
+    - name: Install Docker
+      apt:
+        name: docker-engine
+        state: present
+
+    - name: Prepare node(s) for smoke test
+      command: "docker pull mwendler/cowsay"
+      sudo: yes
+
+- hosts: role=master
+  tasks:
+    - name: Test master node(s)
+      command: "docker run --rm -it mwendler/cowsay 'Hello Docker, I am a master node'"
+      sudo: yes
+
+- hosts: role=worker
+  tasks:
+    - name: Test worker node(s)
+      command: "docker run --rm -it mwendler/cowsay 'Hello Docker, I am a worker node'"
+      sudo: yes

@@ -1,0 +1,8 @@
+# Ubuntu 16.x and higher now only have Python 3.x installed by default.
+# Ansible requires Python 2.x, so we do that here using the 'raw' module.
+
+- name: python2
+  hosts: all
+  gather_facts: no
+  pre_tasks:
+    - raw: sudo apt-get -y install python-simplejson
